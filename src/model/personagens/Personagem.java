@@ -5,19 +5,24 @@ import enums.TipoDano;
 import model.enemies.Inimigo;
 
 public abstract class Personagem {
+
+    // Atributos de identificação
     private String nome;
-    private int vida;
-    private int dano;
+    private final ClassePersonagem classePersonagem;
+
+    // Atributos de progressão
     private int nivel = 1;
     private double experiencia;
-    private ClassePersonagem classePersonagem;
+
+    // Atributos de combate
+    private int vida;
     private int vidaMaxima;
+    private int dano;
     private int defesa;
     private int resistencia;
 
-
+    // Construtor
     public Personagem(String nome, int vida, int dano, ClassePersonagem classePersonagem, int vidaMaxima, int defesa, int resistencia) {
-
         if (vidaMaxima <= 0) {
             throw new IllegalArgumentException("A vida máxima deve ser maior que zero.");
         }
@@ -35,33 +40,14 @@ public abstract class Personagem {
         this.resistencia = resistencia;
     }
 
+    // Getters e setters de identificação
     public String getNome() {
         return nome;
     }
 
     public void setNome(String nome) {
-        if(nome != null && !nome.isEmpty()) {
+        if (nome != null && !nome.isBlank()) {
             this.nome = nome;
-        }
-    }
-
-    public int getVida() {
-        return vida;
-    }
-
-    public void setVida(int vida) {
-        if (vida >= 0 && vida <= vidaMaxima) {
-            this.vida = vida;
-        }
-    }
-
-    public int getDano() {
-        return dano;
-    }
-
-    public void setDano(int dano) {
-        if (dano >= 0) {
-            this.dano = dano;
         }
     }
 
@@ -69,6 +55,11 @@ public abstract class Personagem {
         return classePersonagem;
     }
 
+    public ClassePersonagem getClassePersonagem() {
+        return classePersonagem;
+    }
+
+    // Getters e setters de progressão
     public int getNivel() {
         return nivel;
     }
@@ -89,6 +80,21 @@ public abstract class Personagem {
         }
     }
 
+    public double getExperienciaNecessaria() {
+        return Math.pow(1.5, getNivel() - 1) * 100;
+    }
+
+    // Getters e setters de combate
+    public int getVida() {
+        return vida;
+    }
+
+    public void setVida(int vida) {
+        if (vida >= 0 && vida <= vidaMaxima) {
+            this.vida = vida;
+        }
+    }
+
     public int getVidaMaxima() {
         return vidaMaxima;
     }
@@ -99,8 +105,14 @@ public abstract class Personagem {
         }
     }
 
-    public ClassePersonagem getClassePersonagem() {
-        return classePersonagem;
+    public int getDano() {
+        return dano;
+    }
+
+    public void setDano(int dano) {
+        if (dano >= 0) {
+            this.dano = dano;
+        }
     }
 
     public int getDefesa() {
@@ -119,17 +131,17 @@ public abstract class Personagem {
         this.resistencia = resistencia;
     }
 
+    // Métodos de combate
     public int atacar(Inimigo inimigo) {
         return inimigo.receberDano(getDano(), TipoDano.FISICO);
     }
 
-    public int receberDano(int dano, TipoDano tipo) {
+    public int receberDano(int dano, TipoDano tipoDano) {
         int danoRecebido = 0;
 
-        if (tipo == TipoDano.FISICO){
+        if (tipoDano == TipoDano.FISICO) {
             danoRecebido = Math.max(0, dano - defesa);
-        }
-        if (tipo == TipoDano.MAGICO){
+        } else if (tipoDano == TipoDano.MAGICO) {
             danoRecebido = Math.max(0, dano - resistencia);
         }
 
@@ -139,23 +151,22 @@ public abstract class Personagem {
         return vidaAtual;
     }
 
+    // Progressão de nível
     public abstract void subirNivel();
 
-    public double getExperienciaNecessaria(){
-        return Math.pow(1.5, getNivel() - 1) * 100;
-
-    }
-
+    // Representação textual
     @Override
     public String toString() {
         return "Personagem{" +
                 "nome='" + nome + '\'' +
-                ", vida=" + vida +
-                ", dano=" + dano +
+                ", classePersonagem=" + classePersonagem +
                 ", nivel=" + nivel +
                 ", experiencia=" + experiencia +
-                ", classePersonagem=" + classePersonagem +
+                ", vida=" + vida +
                 ", vidaMaxima=" + vidaMaxima +
+                ", dano=" + dano +
+                ", defesa=" + defesa +
+                ", resistencia=" + resistencia +
                 '}';
     }
 }
