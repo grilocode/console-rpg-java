@@ -1,6 +1,7 @@
 package model.personagens;
 
 import enums.ClassePersonagem;
+import enums.TipoDano;
 import model.enemies.Inimigo;
 
 public abstract class Personagem {
@@ -11,9 +12,11 @@ public abstract class Personagem {
     private double experiencia;
     private ClassePersonagem classePersonagem;
     private int vidaMaxima;
+    private int defesa;
+    private int resistencia;
 
-    public Personagem(String nome, int vida, int dano,
-                      ClassePersonagem classePersonagem, int vidaMaxima) {
+
+    public Personagem(String nome, int vida, int dano, ClassePersonagem classePersonagem, int vidaMaxima, int defesa, int resistencia) {
 
         if (vidaMaxima <= 0) {
             throw new IllegalArgumentException("A vida máxima deve ser maior que zero.");
@@ -28,6 +31,8 @@ public abstract class Personagem {
         this.dano = dano;
         this.classePersonagem = classePersonagem;
         this.vidaMaxima = vidaMaxima;
+        this.defesa = defesa;
+        this.resistencia = resistencia;
     }
 
     public String getNome() {
@@ -94,15 +99,43 @@ public abstract class Personagem {
         }
     }
 
-    public int atacar(Inimigo inimigo) {
-        return inimigo.receberDano(getDano());
+    public ClassePersonagem getClassePersonagem() {
+        return classePersonagem;
     }
 
-    public int receberDano(int dano) {
-        int danoRecebido = Math.max(0, dano);
-        int vidaAtual = Math.max(0, vida - danoRecebido);
+    public int getDefesa() {
+        return defesa;
+    }
 
+    public void setDefesa(int defesa) {
+        this.defesa = defesa;
+    }
+
+    public int getResistencia() {
+        return resistencia;
+    }
+
+    public void setResistencia(int resistencia) {
+        this.resistencia = resistencia;
+    }
+
+    public int atacar(Inimigo inimigo) {
+        return inimigo.receberDano(getDano(), TipoDano.FISICO);
+    }
+
+    public int receberDano(int dano, TipoDano tipo) {
+        int danoRecebido = 0;
+
+        if (tipo == TipoDano.FISICO){
+            danoRecebido = Math.max(0, dano - defesa);
+        }
+        if (tipo == TipoDano.MAGICO){
+            danoRecebido = Math.max(0, dano - resistencia);
+        }
+
+        int vidaAtual = Math.max(0, vida - danoRecebido);
         setVida(vidaAtual);
+
         return vidaAtual;
     }
 

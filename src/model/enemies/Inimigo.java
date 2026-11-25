@@ -1,6 +1,7 @@
 package model.enemies;
 
 import enums.ClasseInimigo;
+import enums.TipoDano;
 import model.personagens.Personagem;
 
 public abstract class Inimigo {
@@ -8,15 +9,17 @@ public abstract class Inimigo {
     private int vida;
     private int dano;
     private int defesa;
+    private int resistencia;
     private int experienciaDrop;
     private int ouroDrop;
     private ClasseInimigo classeInimigo;
 
-    public Inimigo(String nome, int vida, int dano, int defesa, int experiencia, int ouroDrop, ClasseInimigo classeInimigo) {
+    public Inimigo(String nome, int vida, int dano, int defesa, int resistencia, int experiencia, int ouroDrop, ClasseInimigo classeInimigo) {
         this.nome = nome;
         this.vida = vida;
         this.dano = dano;
         this.defesa = defesa;
+        this.resistencia = resistencia;
         this.experienciaDrop = experiencia;
         this.ouroDrop = ouroDrop;
     }
@@ -89,13 +92,20 @@ public abstract class Inimigo {
     }
 
     public int atacar(Personagem personagem) {
-        return personagem.receberDano(getDano());
+        return personagem.receberDano(getDano(), TipoDano.FISICO);
     }
 
-    public  int receberDano(int dano){
-        int danoRecebido = Math.max(0, dano - defesa);
-        int vidaAtual = Math.max(0, vida - danoRecebido);
+    public  int receberDano(int dano, TipoDano tipo) {
+        int danoRecebido = 0;
 
+        if (tipo == TipoDano.FISICO) {
+            danoRecebido = Math.max(0, dano - defesa);
+        }
+        if (tipo == TipoDano.MAGICO) {
+            danoRecebido = Math.max(0, dano - resistencia);
+        }
+
+        int vidaAtual = Math.max(0, vida - danoRecebido);
         setVida(vidaAtual);
         return vidaAtual;
     }

@@ -6,7 +6,7 @@ import model.personagens.Personagem;
 
 public class Goblin extends Inimigo {
     public Goblin() {
-        super("Goblin", 50, 15, 20, 20, 10, ClasseInimigo.GOBLIN);
+        super("Goblin", 60, 22, 5, 2, 30, 10, ClasseInimigo.GOBLIN);
     }
 
     public int roubo(Jogador jogador) {

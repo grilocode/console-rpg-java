@@ -1,13 +1,14 @@
 package model.personagens;
 
 import enums.ClassePersonagem;
+import enums.TipoDano;
 import model.enemies.Inimigo;
 
 public class Cavaleiro extends Personagem {
 
     // Construtor
     public Cavaleiro() {
-        super("Cavaleiro", 150, 12, ClassePersonagem.CAVALEIRO, 150);
+        super("Cavaleiro", 150, 12, ClassePersonagem.CAVALEIRO, 150, 20, 10);
     }
 
     // Evolução de nível
@@ -27,7 +28,8 @@ public class Cavaleiro extends Personagem {
 
     // Habilidade especial: Valentia
     public int valentia(Inimigo inimigo) {
+        TipoDano tipoDano = TipoDano.FISICO;
         int dano = getDano() * 2;
-        return inimigo.receberDano(dano);
+        return inimigo.receberDano(dano, tipoDano);
     }
 }

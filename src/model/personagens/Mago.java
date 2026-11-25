@@ -1,6 +1,7 @@
 package model.personagens;
 
 import enums.ClassePersonagem;
+import enums.TipoDano;
 import model.enemies.Inimigo;
 
 public class Mago extends Personagem {
@@ -11,7 +12,7 @@ public class Mago extends Personagem {
 
     // Construtor
     public Mago() {
-        super("Mago", 70, 25, ClassePersonagem.MAGO, 70);
+        super("Mago", 70, 25, ClassePersonagem.MAGO, 70, 5, 20);
     }
 
     // Getters e Setters
@@ -63,6 +64,6 @@ public class Mago extends Personagem {
         setMana(getMana() - 30);
         int dano = getDano() * 3;
 
-        return inimigo.receberDano(dano);
+        return inimigo.receberDano(dano, TipoDano.MAGICO);
     }
 }
