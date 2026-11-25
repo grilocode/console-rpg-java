@@ -7,7 +7,7 @@ import model.enemies.Inimigo;
 public abstract class Personagem {
 
     // Atributos de identificação
-    private String nome;
+    private final String nome;
     private final ClassePersonagem classePersonagem;
 
     // Atributos de progressão
@@ -15,14 +15,30 @@ public abstract class Personagem {
     private double experiencia;
 
     // Atributos de combate
-    private int vida;
     private int vidaMaxima;
+    private int vida;
     private int dano;
     private int defesa;
     private int resistencia;
 
     // Construtor
-    public Personagem(String nome, int vida, int dano, ClassePersonagem classePersonagem, int vidaMaxima, int defesa, int resistencia) {
+    public Personagem(
+            String nome,
+            ClassePersonagem classePersonagem,
+            int vidaMaxima,
+            int vida,
+            int dano,
+            int defesa,
+            int resistencia
+    ) {
+        if (nome == null || nome.isBlank()) {
+            throw new IllegalArgumentException("O nome não pode ser vazio.");
+        }
+
+        if (classePersonagem == null) {
+            throw new IllegalArgumentException("A classe não pode ser nula.");
+        }
+
         if (vidaMaxima <= 0) {
             throw new IllegalArgumentException("A vida máxima deve ser maior que zero.");
         }
@@ -31,11 +47,15 @@ public abstract class Personagem {
             throw new IllegalArgumentException("A vida deve estar entre zero e a vida máxima.");
         }
 
+        if (dano < 0 || defesa < 0 || resistencia < 0) {
+            throw new IllegalArgumentException("Dano, defesa e resistência não podem ser negativos.");
+        }
+
         this.nome = nome;
-        this.vida = vida;
-        this.dano = dano;
         this.classePersonagem = classePersonagem;
         this.vidaMaxima = vidaMaxima;
+        this.vida = vida;
+        this.dano = dano;
         this.defesa = defesa;
         this.resistencia = resistencia;
     }
@@ -43,16 +63,6 @@ public abstract class Personagem {
     // Getters e setters de identificação
     public String getNome() {
         return nome;
-    }
-
-    public void setNome(String nome) {
-        if (nome != null && !nome.isBlank()) {
-            this.nome = nome;
-        }
-    }
-
-    public ClassePersonagem getClasse() {
-        return classePersonagem;
     }
 
     public ClassePersonagem getClassePersonagem() {
@@ -65,9 +75,11 @@ public abstract class Personagem {
     }
 
     public void setNivel(int nivel) {
-        if (nivel >= 1) {
-            this.nivel = nivel;
+        if (nivel < 1) {
+            throw new IllegalArgumentException("O nível deve ser maior ou igual a um.");
         }
+
+        this.nivel = nivel;
     }
 
     public double getExperiencia() {
@@ -75,9 +87,11 @@ public abstract class Personagem {
     }
 
     public void setExperiencia(double experiencia) {
-        if (experiencia >= 0) {
-            this.experiencia = experiencia;
+        if (experiencia < 0) {
+            throw new IllegalArgumentException("A experiência não pode ser negativa.");
         }
+
+        this.experiencia = experiencia;
     }
 
     public double getExperienciaNecessaria() {
@@ -90,9 +104,11 @@ public abstract class Personagem {
     }
 
     public void setVida(int vida) {
-        if (vida >= 0 && vida <= vidaMaxima) {
-            this.vida = vida;
+        if (vida < 0 || vida > vidaMaxima) {
+            throw new IllegalArgumentException("A vida deve estar entre zero e a vida máxima.");
         }
+
+        this.vida = vida;
     }
 
     public int getVidaMaxima() {
@@ -100,9 +116,11 @@ public abstract class Personagem {
     }
 
     public void setVidaMaxima(int vidaMaxima) {
-        if (vidaMaxima > 0 && vidaMaxima >= this.vida) {
-            this.vidaMaxima = vidaMaxima;
+        if (vidaMaxima <= 0 || vidaMaxima < vida) {
+            throw new IllegalArgumentException("A vida máxima deve ser positiva e não pode ser menor que a vida atual.");
         }
+
+        this.vidaMaxima = vidaMaxima;
     }
 
     public int getDano() {
@@ -110,9 +128,11 @@ public abstract class Personagem {
     }
 
     public void setDano(int dano) {
-        if (dano >= 0) {
-            this.dano = dano;
+        if (dano < 0) {
+            throw new IllegalArgumentException("O dano não pode ser negativo.");
         }
+
+        this.dano = dano;
     }
 
     public int getDefesa() {
@@ -120,6 +140,10 @@ public abstract class Personagem {
     }
 
     public void setDefesa(int defesa) {
+        if (defesa < 0) {
+            throw new IllegalArgumentException("A defesa não pode ser negativa.");
+        }
+
         this.defesa = defesa;
     }
 
@@ -128,15 +152,35 @@ public abstract class Personagem {
     }
 
     public void setResistencia(int resistencia) {
+        if (resistencia < 0) {
+            throw new IllegalArgumentException("A resistência não pode ser negativa.");
+        }
+
         this.resistencia = resistencia;
     }
 
     // Métodos de combate
     public int atacar(Inimigo inimigo) {
+        if (inimigo == null) {
+            throw new IllegalArgumentException("O alvo não pode ser nulo.");
+        }
+
         return inimigo.receberDano(getDano(), TipoDano.FISICO);
     }
 
     public int receberDano(int dano, TipoDano tipoDano) {
+        if (dano < 0) {
+            throw new IllegalArgumentException("O dano recebido não pode ser negativo.");
+        }
+
+        if (tipoDano == null) {
+            throw new IllegalArgumentException("O tipo de dano não pode ser nulo.");
+        }
+
+        if (!estaVivo()) {
+            return getVida();
+        }
+
         int danoRecebido = 0;
 
         if (tipoDano == TipoDano.FISICO) {
@@ -151,22 +195,27 @@ public abstract class Personagem {
         return vidaAtual;
     }
 
+    // Verificação de estado
+    public boolean estaVivo() {
+        return getVida() > 0;
+    }
+
     // Progressão de nível
     public abstract void subirNivel();
 
     // Representação textual
     @Override
     public String toString() {
-        return "Personagem{" +
-                "nome='" + nome + '\'' +
-                ", classePersonagem=" + classePersonagem +
-                ", nivel=" + nivel +
-                ", experiencia=" + experiencia +
-                ", vida=" + vida +
-                ", vidaMaxima=" + vidaMaxima +
-                ", dano=" + dano +
-                ", defesa=" + defesa +
-                ", resistencia=" + resistencia +
-                '}';
+        return "\n========== FICHA DO PERSONAGEM ==========\n" +
+                "Nome:          " + nome + "\n" +
+                "Classe:        " + classePersonagem + "\n" +
+                "Nível:         " + nivel + "\n" +
+                "Experiência:   " + experiencia + "\n" +
+                "\n--------------- ATRIBUTOS ---------------\n" +
+                "Vida:          " + vida + " / " + vidaMaxima + "\n" +
+                "Dano:          " + dano + "\n" +
+                "Defesa:        " + defesa + "\n" +
+                "Resistência:   " + resistencia + "\n" +
+                "==========================================";
     }
 }

@@ -8,10 +8,10 @@ public class Cavaleiro extends Personagem {
 
     // Construtor
     public Cavaleiro() {
-        super("Cavaleiro", 150, 12, ClassePersonagem.CAVALEIRO, 150, 20, 10);
+        super("Cavaleiro", ClassePersonagem.CAVALEIRO, 150, 150, 12, 20, 10);
     }
 
-    // Evolução de nível
+    // Progressão de nível
     @Override
     public void subirNivel() {
         while (getExperiencia() >= getExperienciaNecessaria()) {
@@ -26,10 +26,14 @@ public class Cavaleiro extends Personagem {
         }
     }
 
-    // Habilidade especial: Valentia
+    // Habilidades especiais
     public int valentia(Inimigo inimigo) {
-        TipoDano tipoDano = TipoDano.FISICO;
+        if (inimigo == null) {
+            throw new IllegalArgumentException("O alvo não pode ser nulo.");
+        }
+
         int dano = getDano() * 2;
-        return inimigo.receberDano(dano, tipoDano);
+
+        return inimigo.receberDano(dano, TipoDano.FISICO);
     }
 }

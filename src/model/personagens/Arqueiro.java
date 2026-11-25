@@ -6,16 +6,19 @@ import model.enemies.Inimigo;
 
 public class Arqueiro extends Personagem {
 
+    // Construtor
     public Arqueiro() {
-        super("Arqueiro", 100,  18, ClassePersonagem.ARQUEIRO, 100, 12, 12);
+        super("Arqueiro", ClassePersonagem.ARQUEIRO, 100, 100, 18, 12, 12);
     }
 
+    // Progressão de nível
     @Override
     public void subirNivel() {
         while (getExperiencia() >= getExperienciaNecessaria()) {
             double experienciaNecessaria = getExperienciaNecessaria();
 
             setNivel(getNivel() + 1);
+            setVidaMaxima(getVidaMaxima() + 15);
             setVida(getVida() + 15);
             setDano(getDano() + 3);
 
@@ -23,9 +26,14 @@ public class Arqueiro extends Personagem {
         }
     }
 
+    // Habilidades especiais
     public int chuvaDeFlechas(Inimigo inimigo) {
-        TipoDano tipoDano = TipoDano.FISICO;
+        if (inimigo == null) {
+            throw new IllegalArgumentException("O alvo não pode ser nulo.");
+        }
+
         int dano = (int) (getDano() * 2.5);
-        return inimigo.receberDano(dano, tipoDano);
+
+        return inimigo.receberDano(dano, TipoDano.FISICO);
     }
 }

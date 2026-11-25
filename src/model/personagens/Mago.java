@@ -6,24 +6,26 @@ import model.enemies.Inimigo;
 
 public class Mago extends Personagem {
 
-    // Atributos específicos do Mago
+    // Atributos específicos de combate
     private int mana = 100;
     private int manaMaxima = 100;
 
     // Construtor
     public Mago() {
-        super("Mago", 70, 25, ClassePersonagem.MAGO, 70, 5, 20);
+        super("Mago", ClassePersonagem.MAGO, 70, 70, 25, 5, 20);
     }
 
-    // Getters e Setters
+    // Getters e setters de combate
     public int getMana() {
         return mana;
     }
 
     public void setMana(int mana) {
-        if (mana >= 0 && mana <= manaMaxima) {
-            this.mana = mana;
+        if (mana < 0 || mana > manaMaxima) {
+            throw new IllegalArgumentException("A mana deve estar entre zero e a mana máxima.");
         }
+
+        this.mana = mana;
     }
 
     public int getManaMaxima() {
@@ -38,7 +40,7 @@ public class Mago extends Personagem {
         this.manaMaxima = manaMaxima;
     }
 
-    // Evolução de nível
+    // Progressão de nível
     @Override
     public void subirNivel() {
         while (getExperiencia() >= getExperienciaNecessaria()) {
@@ -55,8 +57,12 @@ public class Mago extends Personagem {
         }
     }
 
-    // Habilidade especial: Bola de Fogo
+    // Habilidades especiais
     public int bolaDeFogo(Inimigo inimigo) {
+        if (inimigo == null) {
+            throw new IllegalArgumentException("O alvo não pode ser nulo.");
+        }
+
         if (getMana() < 30) {
             return -1;
         }
